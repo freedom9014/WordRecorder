@@ -1,19 +1,91 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.Data.OracleClient;
+
+
+
+using System.IO;
 
 namespace WordRecorder
 {
     class DataAccess
     {
-        //OracleConnection型の変数を保持
+
+        
+
+
+        //ファイルに書き込む
+        //データベースに登録するメソッド（引数に渡した二つの値を）
+        public void insertRow(string name, string word)
+        {
+            String insertData = getAllRaw();
+            String inputText = name + "," + word ;
+            insertData += inputText;
+
+            using (StreamWriter w = new StreamWriter(@"C:\Users\freedom9014\Source\Repos\WordRecorder\WordRecorder\wordrecord.txt"))
+            {
+                
+
+                w.WriteLine(insertData);
+            }
+        }
+
+
+       
+
+        //全行読みだしてStringの変数として返す。
+        public String getAllRaw()
+        {
+            String allRaw = null;
+            using (StreamReader r = new StreamReader(@"C:\Users\freedom9014\Source\Repos\WordRecorder\WordRecorder\wordrecord.txt"))
+            {
+                string line;
+                while ((line = r.ReadLine()) != null) // 1行ずつ読み出し。
+                {
+                    allRaw += line+"\r\n";
+                }
+            }
+            return allRaw;
+        }
+
+        //データベースからの一件分のデータをランダムに取得し、文字列で返すメソッド
+        public string getRandomLine()
+        {
+            string line = null;
+            ArrayList al = getAllRawList();
+            Random random  = new Random();
+            line = (String)al[random.Next(al.Count)];
+
+
+            return line;
+        }
+
+        //全行読みだしてArrayListとして返す。
+        public ArrayList getAllRawList()
+        {
+            ArrayList allRaw = new ArrayList();
+            using (StreamReader r = new StreamReader(@"C:\Users\freedom9014\Source\Repos\WordRecorder\WordRecorder\wordrecord.txt"))
+            {
+                string line;
+                while ((line = r.ReadLine()) != null) // 1行ずつ読み出し。
+                {
+                    allRaw.Add(line + "\r\n");
+                }
+            }
+            return allRaw;
+        }
+
+
+
+
+        /*//OracleConnection型の変数を保持
         OracleConnection con =
         new OracleConnection("User ID=scott;Password=tiger;Data Source=orcl;");;
         //接続メソッド
-	public void openDataAccess()
+    public void openDataAccess()
         {
             //接続を開く
             con.Open();
@@ -72,7 +144,7 @@ namespace WordRecorder
 
             return row;
 
-        }
+        }*/
 
     }
 }
